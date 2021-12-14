@@ -31,10 +31,34 @@ open class BaseActivity() : AppCompatActivity() {
             val set1 = ConstraintSet()
             pLayout.setLayoutParams(LinearLayoutCompat.LayoutParams(0, 0))
             viewGroup.addView(pLayout)
-            set1.connect(pLayout.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0)
-            set1.connect(pLayout.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT, 0)
-            set1.connect(pLayout.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 0)
-            set1.connect(pLayout.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, 0)
+            set1.connect(
+                pLayout.getId(),
+                ConstraintSet.TOP,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.TOP,
+                0
+            )
+            set1.connect(
+                pLayout.getId(),
+                ConstraintSet.LEFT,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.LEFT,
+                0
+            )
+            set1.connect(
+                pLayout.getId(),
+                ConstraintSet.RIGHT,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.RIGHT,
+                0
+            )
+            set1.connect(
+                pLayout.getId(),
+                ConstraintSet.BOTTOM,
+                ConstraintSet.PARENT_ID,
+                ConstraintSet.BOTTOM,
+                0
+            )
             set1.applyTo(viewGroup)
         }
         pLayout
@@ -58,18 +82,30 @@ open class BaseActivity() : AppCompatActivity() {
                 this.setAlpha(1f)
             }
         }
+        val regularProgressBar = this.findViewById<ProgressBar>(R.id.progress_bar_loading)
 
-        this.findViewById<ProgressBar>(R.id.progress_bar_loading)?.apply {
-            makeInvisible()
-        }
         this.findViewById<LottieAnimationView>(R.id.lottie_loading)?.apply {
             if (showRetry) {
+                regularProgressBar?.apply {
+                    gone()
+                }
                 setAnimation(if (lottieFile == -1) R.raw.no_internet else lottieFile)
+                playAnimation()
+                makeVisible()
+            } else if (lottieFile == -1) {
+                gone()
+                regularProgressBar?.apply {
+                    makeVisible()
+                }
             } else {
+                regularProgressBar?.apply {
+                    gone()
+                }
                 setAnimation(if (lottieFile == -1) R.raw.loading else lottieFile)
+                playAnimation()
+                makeVisible()
             }
-            playAnimation()
-            makeVisible()
+
         }
         this.findViewById<TextView>(R.id.text_view_loading)?.apply {
             text = message
@@ -90,7 +126,7 @@ open class BaseActivity() : AppCompatActivity() {
     }
 
     fun hideProgress() = CoroutineScope(Dispatchers.Main).launch {
-        delay(2000)
+        delay(500)
         lifecycleScope.launchWhenStarted {
             // progressLayout.slideAnimation(SlideDirection.DOWN, SlideType.HIDE, 700)
             progressLayout.makeInvisible()
@@ -113,6 +149,10 @@ open class BaseActivity() : AppCompatActivity() {
     }
 
 
+}
+
+fun View.gone() {
+    visibility = View.GONE
 }
 
 fun Int.asString(context: Context) = context.getString(this)
