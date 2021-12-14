@@ -47,12 +47,18 @@ open class BaseActivity() : AppCompatActivity() {
         lottieFile: Int = -1,
         reTry: (() -> Unit)? = null
     ) = progressLayout.apply {
-        backgroundColorRes?.let {
+        if (backgroundColorRes != null) {
             this.findViewById<View>(R.id.viewBg)?.apply {
-                this.setBackgroundColor(it)
+                this.setBackgroundColor(backgroundColorRes)
+                this.setAlpha(1f)
+            }
+        } else {
+            this.findViewById<View>(R.id.viewBg)?.apply {
+                this.background = null
                 this.setAlpha(1f)
             }
         }
+
         this.findViewById<ProgressBar>(R.id.progress_bar_loading)?.apply {
             makeInvisible()
         }
@@ -62,6 +68,7 @@ open class BaseActivity() : AppCompatActivity() {
             } else {
                 setAnimation(if (lottieFile == -1) R.raw.loading else lottieFile)
             }
+            playAnimation()
             makeVisible()
         }
         this.findViewById<TextView>(R.id.text_view_loading)?.apply {
@@ -79,7 +86,6 @@ open class BaseActivity() : AppCompatActivity() {
                 makeInvisible()
             }
         }
-        // slideAnimation(SlideDirection.UP,SlideType.SHOW,700)
         makeVisible()
     }
 
